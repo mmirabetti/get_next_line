@@ -6,7 +6,7 @@
 /*   By: mmirabet <mmirabet@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/02/10 10:53:04 by mmirabet          #+#    #+#             */
-/*   Updated: 2020/02/12 19:14:23 by mmirabet         ###   ########.fr       */
+/*   Updated: 2020/02/12 20:25:55 by mmirabet         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,9 +47,9 @@ char	*gnl_substr(char const *s, unsigned int start, size_t len)
 
 	if (!s)
 		return (NULL);
-	length = ft_strlen(s);
+	length = gnl_strlen(s);
 	if (start >= length)
-		return (ft_strdup(""));
+		return (gnl_strdup(""));
 	if (!(substr = (char *)malloc(sizeof(char) * (len + 1))))
 		return (NULL);
 	i = 0;

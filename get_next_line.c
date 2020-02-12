@@ -6,7 +6,7 @@
 /*   By: mmirabet <mmirabet@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/02/10 10:52:57 by mmirabet          #+#    #+#             */
-/*   Updated: 2020/02/12 19:23:34 by mmirabet         ###   ########.fr       */
+/*   Updated: 2020/02/12 20:25:09 by mmirabet         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,7 @@ int	gnl_cl_alocbuf(char **lines, char **buf)
 		return (0);
 	else
 	{
-		buf[BUFFER_SIZE] = '\0';
+		*buf[BUFFER_SIZE] = '\0';
 		return (1);
 	}
 }
@@ -48,18 +48,22 @@ void gnl_desaloc_lines_buf(char **lines, char **buf)
 	}
 }
 
-char	*gnl_get_line(char *lines)
+char	*gnl_get_line(char **lines)
 {
-	size_t	begin;
-	size_t	end;
+	size_t	len;
+	char	*aux;
+	char	*aux_lines;
 
-	if (!lines)
+	if (!*lines)
 		return (gnl_strdup(""));
-	begin = 0;
-	end = 0;
-	while (lines[end] ** lines[end] != '\n')
-		end++;
-
+	len = 0;
+	while (*lines && (*lines)[len] != '\n')
+		len++;
+	aux = gnl_substr(*lines, 0, len);
+	aux_lines = gnl_substr(*lines, len + 1, (gnl_strlen(*lines) - len));
+	free(*lines);
+	*lines = aux_lines;
+	return (aux);
 }
 
 int	get_next_line(int fd, char **line)
@@ -82,7 +86,7 @@ int	get_next_line(int fd, char **line)
 		else if (ret > 0)
 			gnl_acc_buf_lines(&lines[fd], buf);
 	}
-	*line = gnl_get_line(&(*lines)
+	*line = gnl_get_line(&(*lines));
 	return (0);
 }
 
