@@ -6,7 +6,7 @@
 /*   By: mmirabet <mmirabet@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/02/10 10:52:57 by mmirabet          #+#    #+#             */
-/*   Updated: 2020/02/13 10:23:01 by mmirabet         ###   ########.fr       */
+/*   Updated: 2020/02/13 13:04:16 by mmirabet         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,8 +59,8 @@ char	*gnl_get_line(char **lines)
 	char	*aux;
 	char	*aux_lines;
 
-	if (!*lines)
-		return (gnl_strdup(""));
+	if (!*lines || !gnl_strlen(*lines))
+		return (NULL);
 	len = 0;
 	while ((*lines)[len] && (*lines)[len] != '\n')
 		len++;
@@ -80,41 +80,24 @@ int		get_next_line(int fd, char **line)
 
 	if (BUFFER_SIZE < 1 || fd < 0 || !line || !gnl_alocbuf(&buf))
 		return (-1);
-	buf[BUFFER_SIZE] = '\0';
 	ret = -1;
 	while (!gnl_chk_newl(lines[fd]) && ret)
 	{
-		ret = read(fd, buf, BUFFER_SIZE);
-		if (ret == -1)
+		if ((ret = read(fd, buf, BUFFER_SIZE)) == -1)
 		{
 			gnl_desaloc_lines_buf(&(*lines), &buf);
 			return (-1);
 		}
 		else if (ret > 0)
+		{
+			buf[ret] = '\0';
 			gnl_acc_buf_lines(&lines[fd], buf);
+		}
 	}
-	*line = gnl_get_line(&lines[fd]);
-	return (0);
-}
-
-int		main(void)
-{
-	int		ret;
-	int		fd;
-	char	*line;
-
-	fd = open("42", O_RDONLY);
-	if (fd == -1)
-	{
-		gnl_putstr_fd("open() error", STDOUT_FILENO);
-		return (1);
-	}
-	ret = get_next_line(fd, &line);
-	gnl_putendl_fd(line, STDOUT_FILENO);
-	if (close(fd) == -1)
-	{
-		gnl_putstr_fd("close() error", STDOUT_FILENO);
-		return (1);
-	}
-	return (0);
+	free(buf);
+	if (!(*line = gnl_get_line(&lines[fd])))
+		*line = gnl_strdup("");
+	if (ret == 0)
+		return (0);
+	return (1);
 }

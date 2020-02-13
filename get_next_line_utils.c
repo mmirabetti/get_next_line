@@ -6,7 +6,7 @@
 /*   By: mmirabet <mmirabet@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/02/10 10:53:04 by mmirabet          #+#    #+#             */
-/*   Updated: 2020/02/13 10:23:49 by mmirabet         ###   ########.fr       */
+/*   Updated: 2020/02/13 10:35:02 by mmirabet         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -107,40 +107,4 @@ int		gnl_acc_buf_lines(char **lines, char *buf)
 		return (0);
 	free(aux);
 	return (1);
-}
-
-void	gnl_putchar_fd(char c, int fd)
-{
-	write(fd, &c, sizeof(char));
-}
-
-void	gnl_putnbr_fd(int n, int fd)
-{
-	int	digit;
-
-	digit = (n < 0) ? -(n % 10) : n % 10;
-	if (n > -10 && n < 10)
-	{
-		if (n < 0)
-			gnl_putchar_fd('-', fd);
-	}
-	else
-		gnl_putnbr_fd(n / 10, fd);
-	gnl_putchar_fd(digit + '0', fd);
-}
-
-void	gnl_putstr_fd(char *s, int fd)
-{
-	if (s)
-		while (*s)
-		{
-			gnl_putchar_fd(*s, fd);
-			s++;
-		}
-}
-
-void	gnl_putendl_fd(char *s, int fd)
-{
-	gnl_putstr_fd(s, fd);
-	gnl_putchar_fd('\n', fd);
 }
