@@ -6,7 +6,7 @@
 /*   By: mmirabet <mmirabet@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/02/10 10:52:57 by mmirabet          #+#    #+#             */
-/*   Updated: 2020/02/13 13:04:16 by mmirabet         ###   ########.fr       */
+/*   Updated: 2020/02/13 13:38:10 by mmirabet         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -97,7 +97,5 @@ int		get_next_line(int fd, char **line)
 	free(buf);
 	if (!(*line = gnl_get_line(&lines[fd])))
 		*line = gnl_strdup("");
-	if (ret == 0)
-		return (0);
-	return (1);
+	return (ret == 0 ? 0 : 1);
 }
