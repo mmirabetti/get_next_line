@@ -6,30 +6,20 @@
 /*   By: mmirabet <mmirabet@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/02/10 10:52:57 by mmirabet          #+#    #+#             */
-/*   Updated: 2020/02/12 20:25:09 by mmirabet         ###   ########.fr       */
+/*   Updated: 2020/02/13 10:23:01 by mmirabet         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
 
-int	gnl_cl_alocbuf(char **lines, char **buf)
+int		gnl_alocbuf(char **buf)
 {
-	size_t	i;
-
-	i = 0;
-	while (i < OPEN_MAX)
-		lines[i++] = NULL;
-	*buf = NULL;
 	if (!(*buf = (char *)malloc(sizeof(char) * (BUFFER_SIZE + 1))))
 		return (0);
-	else
-	{
-		*buf[BUFFER_SIZE] = '\0';
-		return (1);
-	}
+	return (1);
 }
 
-void gnl_desaloc_lines_buf(char **lines, char **buf)
+void	gnl_desaloc_lines_buf(char **lines, char **buf)
 {
 	size_t	i;
 
@@ -48,6 +38,21 @@ void gnl_desaloc_lines_buf(char **lines, char **buf)
 	}
 }
 
+int		gnl_chk_newl(char *lines)
+{
+	size_t	i;
+
+	i = 0;
+	if (lines)
+		while (lines[i])
+		{
+			if (lines[i] == '\n')
+				return (1);
+			i++;
+		}
+	return (0);
+}
+
 char	*gnl_get_line(char **lines)
 {
 	size_t	len;
@@ -57,25 +62,27 @@ char	*gnl_get_line(char **lines)
 	if (!*lines)
 		return (gnl_strdup(""));
 	len = 0;
-	while (*lines && (*lines)[len] != '\n')
+	while ((*lines)[len] && (*lines)[len] != '\n')
 		len++;
 	aux = gnl_substr(*lines, 0, len);
-	aux_lines = gnl_substr(*lines, len + 1, (gnl_strlen(*lines) - len));
+	len = (*lines)[len] == '\n' ? len + 1 : len;
+	aux_lines = gnl_substr(*lines, len, (gnl_strlen(*lines) - len));
 	free(*lines);
 	*lines = aux_lines;
 	return (aux);
 }
 
-int	get_next_line(int fd, char **line)
+int		get_next_line(int fd, char **line)
 {
 	static char	*lines[OPEN_MAX];
-	ssize_t ret;
-	char *buf;
+	ssize_t		ret;
+	char		*buf;
 
-	if (BUFFER_SIZE < 1 || fd < 0 || !line || !gnl_cl_alocbuf(&(*lines), &buf))
+	if (BUFFER_SIZE < 1 || fd < 0 || !line || !gnl_alocbuf(&buf))
 		return (-1);
+	buf[BUFFER_SIZE] = '\0';
 	ret = -1;
-	while (!gnl_chk_newl(lines[fd]) && !ret)
+	while (!gnl_chk_newl(lines[fd]) && ret)
 	{
 		ret = read(fd, buf, BUFFER_SIZE);
 		if (ret == -1)
@@ -86,52 +93,28 @@ int	get_next_line(int fd, char **line)
 		else if (ret > 0)
 			gnl_acc_buf_lines(&lines[fd], buf);
 	}
-	*line = gnl_get_line(&(*lines));
+	*line = gnl_get_line(&lines[fd]);
 	return (0);
 }
 
-int main(void)
+int		main(void)
 {
-	int ret;
-	int fd;
-	char *line;
+	int		ret;
+	int		fd;
+	char	*line;
 
 	fd = open("42", O_RDONLY);
 	if (fd == -1)
 	{
-		ft_putstr_fd("open() error",STDOUT_FILENO);
+		gnl_putstr_fd("open() error", STDOUT_FILENO);
 		return (1);
 	}
-
 	ret = get_next_line(fd, &line);
-
+	gnl_putendl_fd(line, STDOUT_FILENO);
 	if (close(fd) == -1)
 	{
-		ft_putstr_fd("close() error",STDOUT_FILENO);
+		gnl_putstr_fd("close() error", STDOUT_FILENO);
 		return (1);
 	}
-	return (0);
-/*
-	fd = open("42", O_WRONLY | O_CREAT, S_IRUSR | S_IWUSR);
-	if (fd == -1)
-	{
-		ft_putstr_fd("open() error",STDOUT_FILENO);
-		return (1);
-	}
-
-	i = 'a';
-	while (i < 'a' + 25)
-	{
-		if (write(fd, &i, 1) != 1)
-			return (-1);
-		i++;
-	}
-
-	if (close(fd) == -1)
-	{
-		ft_putstr_fd("close() error",STDOUT_FILENO);
-		return (1);
-	}
-*/
 	return (0);
 }

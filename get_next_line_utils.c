@@ -6,26 +6,11 @@
 /*   By: mmirabet <mmirabet@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/02/10 10:53:04 by mmirabet          #+#    #+#             */
-/*   Updated: 2020/02/12 20:25:55 by mmirabet         ###   ########.fr       */
+/*   Updated: 2020/02/13 10:23:49 by mmirabet         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
-
-int	gnl_chk_newl(char *lines)
-{
-	size_t	i;
-
-	i = 0;
-	if (lines)
-		while (lines[i])
-		{
-			if (lines[i] == '\n')
-				return (1);
-			i++;
-		}
-	return (0);
-}
 
 size_t	gnl_strlen(const char *s)
 {
@@ -66,6 +51,7 @@ char	*gnl_strdup(const char *s1)
 {
 	char	*dup;
 	size_t	i;
+
 	if (s1)
 		i = gnl_strlen(s1);
 	else
@@ -107,7 +93,7 @@ char	*gnl_strjoin(char **s1, char const *s2)
 	return (joined - total_len);
 }
 
-int gnl_acc_buf_lines(char **lines, char *buf)
+int		gnl_acc_buf_lines(char **lines, char *buf)
 {
 	char	*aux;
 
@@ -123,12 +109,12 @@ int gnl_acc_buf_lines(char **lines, char *buf)
 	return (1);
 }
 
-void	ft_putchar_fd(char c, int fd)
+void	gnl_putchar_fd(char c, int fd)
 {
 	write(fd, &c, sizeof(char));
 }
 
-void	ft_putnbr_fd(int n, int fd)
+void	gnl_putnbr_fd(int n, int fd)
 {
 	int	digit;
 
@@ -136,23 +122,25 @@ void	ft_putnbr_fd(int n, int fd)
 	if (n > -10 && n < 10)
 	{
 		if (n < 0)
-			ft_putchar_fd('-', fd);
+			gnl_putchar_fd('-', fd);
 	}
 	else
-		ft_putnbr_fd(n / 10, fd);
-	ft_putchar_fd(digit + '0', fd);
+		gnl_putnbr_fd(n / 10, fd);
+	gnl_putchar_fd(digit + '0', fd);
 }
-void	ft_putstr_fd(char *s, int fd)
+
+void	gnl_putstr_fd(char *s, int fd)
 {
 	if (s)
 		while (*s)
 		{
-			ft_putchar_fd(*s, fd);
+			gnl_putchar_fd(*s, fd);
 			s++;
 		}
 }
-void	ft_putendl_fd(char *s, int fd)
+
+void	gnl_putendl_fd(char *s, int fd)
 {
-	ft_putstr_fd(s, fd);
-	ft_putchar_fd('\n', fd);
+	gnl_putstr_fd(s, fd);
+	gnl_putchar_fd('\n', fd);
 }
